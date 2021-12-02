@@ -1,0 +1,25 @@
+server:
+  port : 8081
+camunda.bpm.client:
+  base-url: http://localhost:8080/engine-rest
+  lock-duration: 10000
+  subscriptions:
+    check-addresses:
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri]
+      process-definition-key: transfer-nft
+    manage-contract:
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri, _addressesExist]
+      process-definition-key: transfer-nft
+    manage-token:
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri]
+      process-definition-key: transfer-nft
+    approve-transfer:
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri, _tokenIdKnown]
+      process-definition-key: transfer-nft
+    transfer-nft:
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri]
+      process-definition-key: transfer-nft
+    error:
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri, _addressesExist, _tokenIdKnown]
+      process-definition-key: transfer-nft
+
