@@ -11,6 +11,8 @@ import org.web3j.protocol.core.methods.response.EthAccounts;
 import org.web3j.protocol.http.HttpService;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Logger;
 
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
 @ExternalTaskSubscription("check-addresses")
 public class CheckAddressesWorker implements ExternalTaskHandler {
 
-    private static final Web3j web3 = Web3j.build(new HttpService());
+    private static final Web3j web3 = Web3j.build(new HttpService("http://vm.niif.cloud.bme.hu:5601"));
 
     public CheckAddressesWorker() throws IOException {
     }
@@ -55,6 +57,7 @@ public class CheckAddressesWorker implements ExternalTaskHandler {
                 break;
             }
         }
+
 
         // add exists to the variables
         VariableMap variables = Variables.createVariables();

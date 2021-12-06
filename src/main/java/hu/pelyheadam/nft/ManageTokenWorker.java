@@ -31,7 +31,7 @@ import static hu.pelyheadam.config.SmartContractConfig.GAS_PRICE;
 public class ManageTokenWorker implements ExternalTaskHandler {
 
     private final static Logger LOGGER = Logger.getLogger(ManageContractWorker.class.getName());
-    private static final Web3j web3 = Web3j.build(new HttpService());
+    private static final Web3j web3 = Web3j.build(new HttpService("http://vm.niif.cloud.bme.hu:5601"));
     private static final AddressConfig addressPaths = new AddressConfig();
 
     @Override
@@ -73,7 +73,7 @@ public class ManageTokenWorker implements ExternalTaskHandler {
                 LOGGER.info("Token minted! Transaction ID: " + receipt.getTransactionHash());
                 tokenIdKnown = true;
             }
-            else if (tokenIdString != null)
+            else if (tokenId != null)
                 tokenIdKnown = true;
 
         }
