@@ -5,21 +5,24 @@ camunda.bpm.client:
   lock-duration: 10000
   subscriptions:
     check-addresses:
-      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri]
-      process-definition-key: transfer-nft
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri, _price]
+      process-definition-key: transfer-nft-exception-handle
     manage-contract:
-      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri, _addressesExist]
-      process-definition-key: transfer-nft
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri]
+      process-definition-key: transfer-nft-exception-handle
     manage-token:
       variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri]
-      process-definition-key: transfer-nft
+      process-definition-key: transfer-nft-exception-handle
     approve-transfer:
-      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri, _tokenIdKnown]
-      process-definition-key: transfer-nft
+      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri]
+      process-definition-key: transfer-nft-exception-handle
     transfer-nft:
       variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri]
-      process-definition-key: transfer-nft
-    error:
-      variable-names: [_from, _to, _tokenId, _contractAddress, _tokenUri, _addressesExist, _tokenIdKnown]
-      process-definition-key: transfer-nft
+      process-definition-key: transfer-nft-exception-handle
+    address-error:
+      process-definition-key: transfer-nft-exception-handle
+    token-error:
+      process-definition-key: transfer-nft-exception-handle
+
+
 

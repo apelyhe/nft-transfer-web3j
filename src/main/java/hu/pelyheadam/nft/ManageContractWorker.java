@@ -2,6 +2,7 @@ package hu.pelyheadam.nft;
 
 import hu.pelyheadam.config.AddressConfig;
 import hu.pelyheadam.contract.TestNFT;
+import hu.pelyheadam.contract.seats.SeatsToken;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
@@ -54,11 +55,7 @@ public class ManageContractWorker implements ExternalTaskHandler {
 
             // if the contract address jas not been sent, deploy a new one
             if (contractAddress == null) {
-
-                TestNFT contract = TestNFT.deploy(web3,
-                        credentials,
-                        contractGasProvider,
-                        "smart contract", "TNFT").send();
+                SeatsToken contract = SeatsToken.deploy(web3, credentials, contractGasProvider).send();
                 contractAddress = contract.getContractAddress();
                 LOGGER.info("Successfully deployed! Address: " + contractAddress);
             }

@@ -3,6 +3,7 @@ package hu.pelyheadam.nft;
 
 import hu.pelyheadam.config.AddressConfig;
 import hu.pelyheadam.contract.TestNFT;
+import hu.pelyheadam.contract.seats.SeatsToken;
 import org.bouncycastle.util.test.Test;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
@@ -54,7 +55,7 @@ public class TransferNFTWorker implements ExternalTaskHandler {
 
         ContractGasProvider gasProvider = new StaticGasProvider(GAS_PRICE,GAS_LIMIT);
 
-        TestNFT contract = TestNFT.load(contractAddress, web3, credentials, gasProvider);
+        SeatsToken contract = SeatsToken.load(contractAddress, web3, credentials, gasProvider);
 
         TransactionReceipt receipt = null;
         try {
@@ -63,7 +64,7 @@ public class TransferNFTWorker implements ExternalTaskHandler {
             e.printStackTrace();
         }
 
-        LOGGER.info(receipt.getTransactionHash());
+        LOGGER.info("Transfered! Transaction hash: " + receipt.getTransactionHash());
 
         externalTaskService.complete(externalTask);
     }

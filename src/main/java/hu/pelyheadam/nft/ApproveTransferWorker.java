@@ -2,6 +2,7 @@ package hu.pelyheadam.nft;
 
 import hu.pelyheadam.config.AddressConfig;
 import hu.pelyheadam.contract.TestNFT;
+import hu.pelyheadam.contract.seats.SeatsToken;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
@@ -41,6 +42,8 @@ public class ApproveTransferWorker implements ExternalTaskHandler {
         String tokenIdString = externalTask.getVariable("_tokenId");
         BigInteger tokenId = new BigInteger(tokenIdString);
 
+        //LOGGER.info("tokenId: " + tokenId.toString());
+
         String fromPath = addressPaths.getPathFromAddress(from);
 
         Credentials credentials = null;
@@ -52,18 +55,19 @@ public class ApproveTransferWorker implements ExternalTaskHandler {
 
         ContractGasProvider gasProvider = new StaticGasProvider(GAS_PRICE,GAS_LIMIT);
 
-        TestNFT contract = TestNFT.load(contractAddress, web3, credentials, gasProvider);
+        SeatsToken contract = SeatsToken.load(contractAddress, web3, credentials, gasProvider);
 
         TransactionReceipt receipt = null;
+
+        // todo: Cannot invoke "org.web3j.protocol.core.methods.response.TransactionReceipt.getTransactionHash()" because "receipt" is null
+
         try {
-            // only for testing
-            //contract.mint(from, tokenId, "tokenURI").send();
             receipt = contract.approve(to, tokenId).send();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        LOGGER.info(receipt.getTransactionHash());
+        LOGGER.info("Approved! Transaction hash: " + receipt.getTransactionHash());
 
         externalTaskService.complete(externalTask);
     }

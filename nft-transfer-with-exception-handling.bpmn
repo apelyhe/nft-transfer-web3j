@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0fe0hmi" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.11.1" modeler:executionPlatform="Camunda Platform" modeler:executionPlatformVersion="7.15.0">
+  <bpmn:process id="transfer-nft-exception-handle" name="Transfer NFT with exception handling" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_1au4b6b" />
+    <bpmn:startEvent id="Event_0ot5bl3">
+      <bpmn:outgoing>Flow_1ky7ns3</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_16ep3ic" name="Check addresses" camunda:type="external" camunda:topic="check-addresses">
+      <bpmn:incoming>Flow_1ky7ns3</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lmjp3f</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1mclq4n" name="Transfer to target" camunda:type="external" camunda:topic="transfer-nft">
+      <bpmn:incoming>Flow_05hyxop</bpmn:incoming>
+      <bpmn:outgoing>Flow_0o3rgxr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0koazqb">
+      <bpmn:incoming>Flow_0o3rgxr</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_1lt4db6" name="Approve transfer" camunda:type="external" camunda:topic="approve-transfer">
+      <bpmn:incoming>Flow_181ipkl</bpmn:incoming>
+      <bpmn:outgoing>Flow_05hyxop</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1qxdwls" name="Manage contract" camunda:type="external" camunda:topic="manage-contract">
+      <bpmn:incoming>Flow_1lmjp3f</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ncnujc</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="manage-token" name="Manage token" camunda:type="external" camunda:topic="manage-token">
+      <bpmn:incoming>Flow_1ncnujc</bpmn:incoming>
+      <bpmn:outgoing>Flow_181ipkl</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1lmjp3f" sourceRef="Activity_16ep3ic" targetRef="Activity_1qxdwls" />
+    <bpmn:sequenceFlow id="Flow_05hyxop" sourceRef="Activity_1lt4db6" targetRef="Activity_1mclq4n" />
+    <bpmn:sequenceFlow id="Flow_0o3rgxr" sourceRef="Activity_1mclq4n" targetRef="Event_0koazqb" />
+    <bpmn:sequenceFlow id="Flow_1ncnujc" sourceRef="Activity_1qxdwls" targetRef="manage-token" />
+    <bpmn:boundaryEvent id="Event_0fua80s" attachedToRef="Activity_16ep3ic">
+      <bpmn:outgoing>Flow_0j1iwwg</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0xftcas" errorRef="Error_1c3zpoy" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0j1iwwg" sourceRef="Event_0fua80s" targetRef="Activity_0cxh0r0" />
+    <bpmn:endEvent id="Event_0bfg761">
+      <bpmn:incoming>Flow_00dk0oo</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0o8sq0v" errorRef="Error_1c3zpoy" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_181ipkl" sourceRef="manage-token" targetRef="Activity_1lt4db6" />
+    <bpmn:boundaryEvent id="Event_1rdtc2t" attachedToRef="manage-token">
+      <bpmn:outgoing>Flow_1uhgquz</bpmn:outgoing>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0dclg6f" errorRef="Error_14c8ww7" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1uhgquz" sourceRef="Event_1rdtc2t" targetRef="Activity_1xykgpw" />
+    <bpmn:endEvent id="Event_1nkx9in">
+      <bpmn:incoming>Flow_13t3a9g</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1gcsefk" errorRef="Error_14c8ww7" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_00dk0oo" sourceRef="Activity_0cxh0r0" targetRef="Event_0bfg761" />
+    <bpmn:serviceTask id="Activity_0cxh0r0" name="Log address error" camunda:type="external" camunda:topic="address-error">
+      <bpmn:incoming>Flow_0j1iwwg</bpmn:incoming>
+      <bpmn:outgoing>Flow_00dk0oo</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_13t3a9g" sourceRef="Activity_1xykgpw" targetRef="Event_1nkx9in" />
+    <bpmn:serviceTask id="Activity_1xykgpw" name="Log token error" camunda:type="external" camunda:topic="token-error">
+      <bpmn:incoming>Flow_1uhgquz</bpmn:incoming>
+      <bpmn:outgoing>Flow_13t3a9g</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1ky7ns3" sourceRef="Event_0ot5bl3" targetRef="Activity_16ep3ic" />
+  </bpmn:process>
+  <bpmn:error id="Error_1c3zpoy" name="Address error" errorCode="Address_Error" />
+  <bpmn:error id="Error_14c8ww7" name="Token error" errorCode="Token_Error" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="transfer-nft-exception-handle">
+      <bpmndi:BPMNEdge id="Flow_13t3a9g_di" bpmnElement="Flow_13t3a9g">
+        <di:waypoint x="600" y="290" />
+        <di:waypoint x="600" y="332" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_00dk0oo_di" bpmnElement="Flow_00dk0oo">
+        <di:waypoint x="313" y="290" />
+        <di:waypoint x="313" y="332" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1uhgquz_di" bpmnElement="Flow_1uhgquz">
+        <di:waypoint x="600" y="178" />
+        <di:waypoint x="600" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_181ipkl_di" bpmnElement="Flow_181ipkl">
+        <di:waypoint x="650" y="120" />
+        <di:waypoint x="690" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0j1iwwg_di" bpmnElement="Flow_0j1iwwg">
+        <di:waypoint x="313" y="178" />
+        <di:waypoint x="313" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ncnujc_di" bpmnElement="Flow_1ncnujc">
+        <di:waypoint x="510" y="120" />
+        <di:waypoint x="550" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0o3rgxr_di" bpmnElement="Flow_0o3rgxr">
+        <di:waypoint x="880" y="160" />
+        <di:waypoint x="880" y="212" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05hyxop_di" bpmnElement="Flow_05hyxop">
+        <di:waypoint x="790" y="120" />
+        <di:waypoint x="830" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lmjp3f_di" bpmnElement="Flow_1lmjp3f">
+        <di:waypoint x="360" y="120" />
+        <di:waypoint x="410" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ky7ns3_di" bpmnElement="Flow_1ky7ns3">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="260" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Activity_16ep3ic_di" bpmnElement="Activity_16ep3ic">
+        <dc:Bounds x="260" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1mclq4n_di" bpmnElement="Activity_1mclq4n">
+        <dc:Bounds x="830" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0koazqb_di" bpmnElement="Event_0koazqb">
+        <dc:Bounds x="862" y="212" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1lt4db6_di" bpmnElement="Activity_1lt4db6">
+        <dc:Bounds x="690" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qxdwls_di" bpmnElement="Activity_1qxdwls">
+        <dc:Bounds x="410" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0dlt6wk_di" bpmnElement="manage-token">
+        <dc:Bounds x="550" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ymefqz_di" bpmnElement="Event_0bfg761">
+        <dc:Bounds x="295" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09bl6x3_di" bpmnElement="Event_1nkx9in">
+        <dc:Bounds x="582" y="332" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0u4pwni_di" bpmnElement="Activity_0cxh0r0">
+        <dc:Bounds x="263" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_18489nf_di" bpmnElement="Activity_1xykgpw">
+        <dc:Bounds x="550" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0ot5bl3_di" bpmnElement="Event_0ot5bl3">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1o0096k_di" bpmnElement="Event_1rdtc2t">
+        <dc:Bounds x="582" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_03nqybt_di" bpmnElement="Event_0fua80s">
+        <dc:Bounds x="295" y="142" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

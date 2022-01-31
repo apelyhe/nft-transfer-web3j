@@ -5,16 +5,20 @@ import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
 import org.camunda.bpm.client.task.ExternalTaskService;
 import org.springframework.stereotype.Component;
+
 import java.util.logging.Logger;
 
 @Component
-@ExternalTaskSubscription("error")
-public class ErrorWorker implements ExternalTaskHandler {
+@ExternalTaskSubscription("address-error")
+public class LogAddressError implements ExternalTaskHandler {
 
-    private final static Logger LOGGER = Logger.getLogger(ErrorWorker.class.getName());
+    private final static Logger LOGGER = Logger.getLogger(LogAddressError.class.getName());
 
     @Override
     public void execute(ExternalTask externalTask, ExternalTaskService externalTaskService) {
-        LOGGER.info("The target account does not exists!");
+
+        LOGGER.warning("Invalid address(es)!");
+
+        externalTaskService.complete(externalTask);
     }
 }

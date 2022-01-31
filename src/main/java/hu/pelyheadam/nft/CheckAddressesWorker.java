@@ -1,4 +1,9 @@
 package hu.pelyheadam.nft;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
 import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
@@ -11,10 +16,7 @@ import org.web3j.protocol.core.methods.response.EthAccounts;
 import org.web3j.protocol.http.HttpService;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
-import java.util.logging.Logger;
 
 @Component
 @ExternalTaskSubscription("check-addresses")
@@ -33,6 +35,8 @@ public class CheckAddressesWorker implements ExternalTaskHandler {
         // get variables
         String fromInString = externalTask.getVariable("_from");
         String toInString = externalTask.getVariable("_to");
+        //String price = externalTask.getVariable("_price");
+        //System.out.println("\n\n\n" + price + "\n\n\n");
 
         // get all the accounts in network
         EthAccounts accounts = null;
@@ -59,12 +63,39 @@ public class CheckAddressesWorker implements ExternalTaskHandler {
         }
 
 
-        // add exists to the variables
-        VariableMap variables = Variables.createVariables();
-        variables.put("_addressesExist", addressesExist);
-        
-        // complete external task
-        externalTaskService.complete(externalTask, variables);
+        if (!toExists || !fromExists) {
+            /*try {
+                externalTaskService.handleBpmnError(externalTask, "Address_Error");
+                //throwAddressError(externalTask.getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }*/
+            externalTaskService.handleBpmnError(externalTask, "Address_Error");
+        } else {
+            // complete external task
+            externalTaskService.complete(externalTask);
+        }
+    }
+
+    //source: https://stackoverflow.com/questions/7181534/http-post-using-json-in-java
+    private void throwAddressError(String id) throws IOException {
+
+
+        try (CloseableHttpClient httpClient = HttpClientBuilder.create().build()) {
+            HttpPost request = new HttpPost("http://localhost:8080/engine-rest/external-task/" + id + "/bpmnError");
+            StringEntity params = new StringEntity("    {\n" +
+                    "      \"workerId\": \"" + id + "\",\n" +
+                    "      \"errorCode\": \"Address_Error\",\n" +
+                    "      \"errorMessage\": \"Invalid address(es).\",\n" +
+                    "       }");
+            request.addHeader("content-type", "application/json");
+            request.setEntity(params);
+            HttpResponse response = httpClient.execute(request);
+            //System.out.println("STATUS CODE:   " + response.getStatusLine().getStatusCode());
+            //System.out.println("REASON:   " + response.getStatusLine().toString());
+        } catch (Exception ignored) {
+        }
+
     }
 
     // a function in order to get ethereum accounts

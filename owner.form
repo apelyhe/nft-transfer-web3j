@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 2,
+  "components": [
+    {
+      "label": "Buyer's offer",
+      "type": "textfield",
+      "id": "Field_1qm0lop",
+      "key": "_price",
+      "description": "How much does the buyer offer?",
+      "validate": {
+        "required": true
+      }
+    },
+    {
+      "label": "Accept?",
+      "type": "checkbox",
+      "id": "Field_04b9xc4",
+      "key": "_accepted",
+      "description": "If you do not accept, leave it as is."
+    },
+    {
+      "action": "submit",
+      "label": "Submit",
+      "type": "button",
+      "id": "Field_0gjlfna",
+      "key": "field_1ei514t"
+    }
+  ],
+  "type": "default",
+  "id": "accept_price"
+}
